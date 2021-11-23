@@ -1,35 +1,27 @@
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Skill } from './Skill';
 
 @ObjectType()
 @Entity()
-export class Wilder extends BaseEntity {
+export class User extends BaseEntity {
     @Field(() => ID)
     @PrimaryGeneratedColumn()
     id!: number;
 
     @Field()
     @Column()
-    name!: string;
+    email!: string;
 
     @Field()
     @Column()
-    city!: string;
-
-    @Field(() => [Skill])
-    @ManyToMany(() => Skill, (skill) => skill.wilders)
-    skills!: Skill[];
+    password!: string;
 }
 
 @InputType()
-export class WilderInput {
+export class UserInput {
     @Field()
-    name!: string;
+    email!: string;
 
     @Field()
-    city!: string;
-
-    @Field(() => [Skill])
-    skills!: Skill[];
+    password!: string;
 }
