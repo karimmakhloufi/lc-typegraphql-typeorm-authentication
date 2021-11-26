@@ -4,6 +4,7 @@ import { UsersResolver } from './resolvers/Users';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
 import { customAuthChecker } from './auth';
+import { ProjectsResolver } from './resolvers/Project';
 
 const PORT = process.env.PORT || 4000;
 
@@ -13,7 +14,7 @@ async function bootstrap() {
 
     // ... Building schema here
     const schema = await buildSchema({
-        resolvers: [UsersResolver],
+        resolvers: [UsersResolver, ProjectsResolver],
         authChecker: customAuthChecker,
     });
 

@@ -1,5 +1,6 @@
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Project } from './Project';
 
 @ObjectType()
 @Entity()
@@ -15,6 +16,10 @@ export class User extends BaseEntity {
     @Field()
     @Column()
     password!: string;
+
+    @Field(() => [Project])
+    @OneToMany(() => Project, project => project.createBy)
+    projects: Project[];
 }
 
 @InputType()
