@@ -1,26 +1,38 @@
-import * as jwt from 'jsonwebtoken';
-import { getRepository } from 'typeorm';
-import { User } from './models/User';
+import * as jwt from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
+import { getRepository } from "typeorm";
+import { User } from "./models/User";
 
-export const customAuthChecker = async (
-    { root, args, context, info },
-) => {
-    const userRepo = getRepository(User);
-    const userJwt = context.token;
-    try {
-        const decoded = jwt.verify(userJwt, 'supersecret');
-        if(!decoded.userId) {
-            return false;
-        }
+type RemoveIndex<T> = {
+  [P in keyof T as string extends P
+    ? never
+    : number extends P
+    ? never
+    : P]: T[P];
+};
 
-        const user = await userRepo.findOne(decoded.userId);
-        if(!user) {
-            return false;
-        }
+interface CustomPayload extends RemoveIndex<JwtPayload> {
+  userId: string;
+}
 
-        context.user = user;
-        return true;
-    } catch (err) {
-        return false;
+export const customAuthChecker = async ({ root, args, context, info }) => {
+  const userRepo = getRepository(User);
+  const userJwt = context.token;
+  try {
+    const decoded = <CustomPayload>jwt.verify(userJwt, "supersecret");
+    console.log(decoded.thisdoesnotexist);
+    if (!decoded.userId) {
+      return false;
     }
+
+    const user = await userRepo.findOne(decoded.userId);
+    if (!user) {
+      return false;
+    }
+
+    context.user = user;
+    return true;
+  } catch (err) {
+    return false;
+  }
 };
